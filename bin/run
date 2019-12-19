@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-var babel  = require('@babel/core'),
+var _      = require('lodash'),
+    babel  = require('@babel/core'),
     plugin = require('../src/index'),
     yargs  = require('yargs');
 
-var desc = 'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another timeline.';
+var desc = 'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another universe.';
 var argv = yargs
   .usage('$0 <filepath>', desc, (yargs) => {
     yargs.positional('filepath', {
@@ -12,44 +13,95 @@ var argv = yargs
       type: 'string',
     })
   })
-  .option('worlds', {
-    alias: 'w',
-    default: 1,
-    describe: 'Number of worlds to explore.',
+  .option('depth', {
+    alias: 'd',
+    default: 0,
+    describe: 'Depth of recursion.',
     type: 'number',
   })
   .argv;
 
-if (argv.worlds <= 0) {
-  argv.worlds = argv.w = 1;
-}
-
-function printResult({ code }, i) {
-  console.log(`/* World ${i + 1} */`);
+function printResult({ code, id }) {
+  console.log(`/* ${id} */`);
   console.log(code, "\n");
 }
 
+class Tree {
+  constructor() {
+    this._children = [];
+    this._data = undefined;
+    this._depth = 0;
+  }
+
+  set data(data) {
+    this._data = data;
+  }
+
+  get data() {
+    return this._data;
+  }
+
+  set depth(depth) {
+    this._depth = depth;
+  }
+
+  get depth() {
+    return this._depth;
+  }
+
+  insert(tree) {
+    tree.depth = this.depth + 1;
+    this._children.push(tree);
+  }
+
+  each(f) {
+    f(this);
+    _.each(this._children, (child) => child.each(f));
+  }
+}
+
 async function main() {
-  var promises = [];
   var options = {
     plugins: [plugin]
   };
 
-  var i = 0;
-  var result = babel.transformFileSync(argv.filepath, options);
+  var t = new Tree();
 
-  printResult(result, i);
+  t.data = {
+    code: babel.transformFileSync(argv.filepath, options).code,
+    id: 'World 0'
+  };
 
-  while (++i < argv.worlds) {
-    try {
-      result = babel.transformSync(result.code, options);
-    } catch(e) {
-      console.log(e);
-      break;
-    }
+  function branch(node) {
+    var a = new Tree();
+    var b = new Tree();
 
-    printResult(result, i);
+    a.data = {
+      code: babel.transformSync(node.data.code, options).code,
+      id: `${node.data.id} => World ${node.depth}₀`
+    };
+    b.data = {
+      code: babel.transformSync(node.data.code, options).code,
+      id: `${node.data.id} => World ${node.depth}₁`
+    };
+
+    node.insert(a);
+    node.insert(b);
   }
+
+  var depth = -1;
+
+  while (++depth < argv.depth) {
+    t.each((node) => {
+      if (node.depth === depth) {
+        branch(node);
+      }
+    });
+  }
+
+  t.each((node) => {
+    printResult(node.data, node.data.id);
+  });
 }
 
 main();

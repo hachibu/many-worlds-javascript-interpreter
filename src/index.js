@@ -54,11 +54,10 @@ function plugin({ types: t }) {
     ),
     StringLiteral: randomVisitor(
       (path) => {
-        function misspellPattern(v) {
+        function misspell(v) {
           var typos = [
-            ['an', 'and'],
+            ['the', 'teh'],
             ['there', 'their'],
-            ['too', 'to'],
             ['too', 'two'],
             ['than', 'then'],
             ['where', 'were'],
@@ -66,18 +65,26 @@ function plugin({ types: t }) {
             ["you're", 'your'],
             ["it's", 'its'],
             ['your', 'you'],
-            ['chose', 'choose'],
+            ['o', 'oo'],
+            ['a', 'e'],
+            ['e', 'i'],
+            ['i', 'o'],
+            ['o', 'u'],
+            ['u', 'o'],
           ];
-          var typo = _.sample(typos);
 
-          if (choose()) {
-            typo = _.reverse(typo);
-          }
+          _.each(typos, (typo) => {
+            if (choose()) {
+              typo = _.reverse(typo);
+            }
 
-          var pattern = new RegExp(typo[0], 'i');
-          var replacement = typo[1];
+            var pattern = new RegExp(typo[0], 'ig');
+            var replacement = typo[1];
 
-          return _.replace(v, pattern, replacement);
+            v = _.replace(v, pattern, replacement);
+          });
+
+          return v;
         }
 
         function randomIndex(array) {
@@ -86,36 +93,27 @@ function plugin({ types: t }) {
 
         function miscase(v) {
           var words = _.split(v, ' ');
-          var i = randomIndex(words);
-          var format = _.sample([
-            _.upperFirst,
-            _.lowerFirst,
-          ]);
+          var indices = [
+            randomIndex(words),
+            randomIndex(words),
+          ];
 
-          words[i] = format(words[i]);
-
-          return _.join(words, ' ');
-        }
-
-        function misspellGeneric(v) {
-          var words = _.split(v, ' ');
-          var i = randomIndex(words);
-          var format = _.sample([
-            // Collapse or expand 2 repeated letters
-            (w) => w,
-            // Vowel swap
-            (w) => w,
-          ]);
-
-          words[i] = format(words[i]);
+          _.each(indices, (i) => {
+            var format = _.sample([
+              _.upperFirst,
+              _.lowerFirst,
+              (w) => ' ' + w,
+              (w) => w + ' ',
+            ]);
+            words[i] = format(words[i]);
+          });
 
           return _.join(words, ' ');
         }
 
         var format = _.sample([
           miscase,
-          misspellPattern,
-          misspellGeneric,
+          misspell,
         ]);
 
         path.node.value = format(path.node.value);
@@ -138,7 +136,7 @@ function randomVisitor(...fs) {
 
 function choose() {
   var n = 0;
-  var m = _.random(10);
+  var m = _.random(8);
 
   return _.random(n, m) === n;
 }

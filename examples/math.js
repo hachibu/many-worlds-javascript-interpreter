@@ -1,5 +1,5 @@
-function calculateSomething(a, b) {
-  return (a + b - (b * b)) / (a / 5.5);
+function calculate(a, b, c) {
+  return a + b * c;
 }
 
-console.log('Here are the results:', calculateSomething(...[1, 2]));
+console.log('The result is', calculate(...[1, 2, 3]));
