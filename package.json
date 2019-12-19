@@ -1,0 +1,10 @@
+{
+  "name": "many-worlds-javascript-interpreter",
+  "version": "0.1.0",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "7.7.5",
+    "lodash": "4.17.15",
+    "yargs": "15.0.2"
+  }
+}

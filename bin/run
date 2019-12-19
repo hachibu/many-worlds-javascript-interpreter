@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var babel  = require('@babel/core'),
+    plugin = require('../src/index'),
+    yargs  = require('yargs');
+
+var argv = yargs.argv._;
+
+async function main() {
+  var filepath = argv[0];
+  var options = {
+    plugins: [plugin]
+  };
+
+  babel.transformFileAsync(filepath, options).then(
+    (result) => console.log(result.code),
+    console.error
+  );
+}
+
+main();
