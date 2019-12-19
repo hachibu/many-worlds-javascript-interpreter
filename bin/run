@@ -24,17 +24,21 @@ if (argv.worlds <= 0) {
   argv.worlds = argv.w = 1;
 }
 
+function printResult({ code }, i) {
+  console.log(`/* World ${i + 1} */`);
+  console.log(code, "\n");
+}
+
 async function main() {
   var promises = [];
   var options = {
     plugins: [plugin]
   };
 
+  var i = 0;
   var result = babel.transformFileSync(argv.filepath, options);
 
-  console.log(result.code);
-
-  var i = 0;
+  printResult(result, i);
 
   while (++i < argv.worlds) {
     try {
@@ -44,7 +48,7 @@ async function main() {
       break;
     }
 
-    console.log(result.code);
+    printResult(result, i);
   }
 }
 
