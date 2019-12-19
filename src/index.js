@@ -1,19 +1,22 @@
 var _ = require('lodash');
 
-function flipCoin() {
-  return _.random(0, 1) === 0;
+function choose() {
+  var n = 0;
+  var m = _.random(10);
+
+  return _.random(n, m) === n;
 }
 
 function maybeVisit(f) {
   return function() {
-    return flipCoin() ? f(...arguments) : null;
+    return choose() ? f(...arguments) : null;
   };
 }
 
 module.exports = function({ types: t }) {
   var visitor = {
     ArrayExpression: maybeVisit(path => {
-      path.node.elements = flipCoin() ?
+      path.node.elements = choose() ?
         _.shuffle(path.node.elements) :
         [];
     }),
@@ -27,7 +30,7 @@ module.exports = function({ types: t }) {
       path.node.arguments = _.shuffle(path.node.arguments);
     }),
     NumericLiteral: maybeVisit(path => {
-      var n = flipCoin() ? 1 : -1;
+      var n = choose() ? 1 : -1;
 
       path.node.value += n;
     }),
