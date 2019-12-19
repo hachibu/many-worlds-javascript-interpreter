@@ -1,23 +1,6 @@
 var _ = require('lodash');
 
-function choose() {
-  var n = 0;
-  var m = _.random(10);
-
-  return _.random(n, m) === n;
-}
-
-function randomVisitor(...fs) {
-  return function(...args) {
-    for (var f of fs) {
-      if (choose()) {
-        f(...args);
-      }
-    }
-  };
-}
-
-module.exports = function({ types: t }) {
+function plugin({ types: t }) {
   var visitor = {
     ArrayExpression: randomVisitor(
       (path) => {
@@ -64,7 +47,7 @@ module.exports = function({ types: t }) {
         }
       },
       (path) => {
-        if (path.node.value > 0) {
+        if (path.node.value >= 1) {
           path.node.value -= 1;
         }
       },
@@ -142,3 +125,22 @@ module.exports = function({ types: t }) {
 
   return { visitor };
 };
+
+function randomVisitor(...fs) {
+  return function(...args) {
+    for (var f of fs) {
+      if (choose()) {
+        f(...args);
+      }
+    }
+  };
+}
+
+function choose() {
+  var n = 0;
+  var m = _.random(10);
+
+  return _.random(n, m) === n;
+}
+
+module.exports = plugin;
