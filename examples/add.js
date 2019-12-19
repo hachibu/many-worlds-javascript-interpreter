@@ -1,8 +1,8 @@
-function add(a, b) {
+function addNumbers(a, b) {
   return a + b;
 }
 
 console.log(
-  'result:',
-  add(...[1, 2])
+  'The Result:',
+  addNumbers(...[1, 2])
 );

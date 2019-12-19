@@ -8,9 +8,10 @@ Here's a list of things this program may or may not change:
 
 - Shuffle arrays.
 - Swap binary expression operands.
+- Swap binary operators.
 - Shuffle function call arguments.
 - Create off-by-one errors.
-- Create typos in strings.
+- Create typos in strings and identifiers.
 
 ## Install
 
