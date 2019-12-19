@@ -7,7 +7,7 @@ function choose() {
   return _.random(n, m) === n;
 }
 
-function maybeVisit(f) {
+function randomVisitor(f) {
   return function() {
     return choose() ? f(...arguments) : null;
   };
@@ -15,22 +15,22 @@ function maybeVisit(f) {
 
 module.exports = function({ types: t }) {
   var visitor = {
-    ArrayExpression: maybeVisit(path => {
+    ArrayExpression: randomVisitor(path => {
       path.node.elements = _.shuffle(path.node.elements);
     }),
-    BinaryExpression: maybeVisit(path => {
+    BinaryExpression: randomVisitor(path => {
       var left = path.node.left;
 
       path.node.left = path.node.right;
       path.node.right = left;
     }),
-    CallExpression: maybeVisit(path => {
+    CallExpression: randomVisitor(path => {
       path.node.arguments = _.shuffle(path.node.arguments);
     }),
-    NumericLiteral: maybeVisit(path => {
+    NumericLiteral: randomVisitor(path => {
       path.node.value += 1;
     }),
-    StringLiteral: maybeVisit(path => {
+    StringLiteral: randomVisitor(path => {
       var format = _.sample([
         _.camelCase,
         _.kebabCase,
