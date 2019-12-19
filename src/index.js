@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 function choose() {
   var n = 0;
-  var m = _.random(100);
+  var m = _.random(10, 100);
 
   return _.random(n, m) === n;
 }

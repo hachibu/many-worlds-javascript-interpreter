@@ -19,7 +19,8 @@ Here's a list of things this program may or may not change:
 
 ## Usage
 
-    many-worlds-javascript-interpreter examples/add.js --worlds 1000
+    many-worlds-javascript-interpreter examples/add.js --worlds 10
+    many-worlds-javascript-interpreter examples/add.js --worlds 10 | node
 
 ## Uninstall
 
