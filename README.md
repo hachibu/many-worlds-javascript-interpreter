@@ -6,7 +6,7 @@ that our programs are also branching. This program allows you to explore
 mistakes you might have made in another timeline. I should warn you that using
 this program may lead to quantum branching of your world.
 
-Here's a list of things this program may or may not change:
+Here's an incomplete list of things this program may or may not change:
 
 - Shuffle or empty arrays.
 - Swap binary expression operands.
@@ -14,6 +14,15 @@ Here's a list of things this program may or may not change:
 - Create off-by-one errors.
 - Create typos.
 
+## Install
+
+    yarn install
+    yarn link
+
 ## Usage
 
-    bin/run examples/add.js
+    many-worlds-javascript-interpreter examples/add.js --worlds 3
+
+## Uninstall
+
+    yarn unlink

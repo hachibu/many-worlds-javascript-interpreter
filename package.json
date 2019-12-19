@@ -2,6 +2,9 @@
   "name": "many-worlds-javascript-interpreter",
   "version": "0.1.0",
   "license": "MIT",
+  "bin": {
+    "many-worlds-javascript-interpreter": "./bin/run"
+  },
   "dependencies": {
     "@babel/core": "7.7.5",
     "lodash": "4.17.15",

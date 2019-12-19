@@ -4,18 +4,42 @@ var babel  = require('@babel/core'),
     plugin = require('../src/index'),
     yargs  = require('yargs');
 
-var argv = yargs.argv._;
+var desc = 'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another timeline.';
+var argv = yargs
+  .usage('$0 <filepath>', desc, (yargs) => {
+    yargs.positional('filepath', {
+      describe: 'JavaScript filepath.',
+      type: 'string',
+    })
+  })
+  .option('worlds', {
+    alias: 'w',
+    default: 1,
+    describe: 'Number of worlds to explore.',
+    type: 'number',
+  })
+  .argv;
+
+if (argv.worlds <= 0) {
+  argv.worlds = argv.w = 1;
+}
 
 async function main() {
-  var filepath = argv[0];
+  var promises = [];
   var options = {
     plugins: [plugin]
   };
 
-  babel.transformFileAsync(filepath, options).then(
-    (result) => console.log(result.code),
-    console.error
-  );
+  for (var i = 0; i < argv.worlds; i++) {
+    promises.push(babel.transformFileAsync(argv.filepath, options));
+  }
+
+  promises.forEach((promise, i) => {
+    promise.then(
+      (result) => console.log(result.code, "\n"),
+      console.error
+    );
+  });
 }
 
 main();
