@@ -3,6 +3,6 @@ function addNumbers(a, b) {
 }
 
 console.log(
-  'The Result:',
+  'their results:',
   addNumbers(...[1, 2])
 );

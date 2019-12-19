@@ -71,9 +71,68 @@ module.exports = function({ types: t }) {
     ),
     StringLiteral: randomVisitor(
       (path) => {
+        function misspellPattern(v) {
+          var typos = [
+            ['an', 'and'],
+            ['there', 'their'],
+            ['too', 'to'],
+            ['too', 'two'],
+            ['than', 'then'],
+            ['where', 'were'],
+            ["we're", 'were'],
+            ["you're", 'your'],
+            ["it's", 'its'],
+            ['your', 'you'],
+            ['chose', 'choose'],
+          ];
+          var typo = _.sample(typos);
+
+          if (choose()) {
+            typo = _.reverse(typo);
+          }
+
+          var pattern = new RegExp(typo[0], 'i');
+          var replacement = typo[1];
+
+          return _.replace(v, pattern, replacement);
+        }
+
+        function randomIndex(array) {
+          return Math.floor(Math.random() * array.length);
+        }
+
+        function miscase(v) {
+          var words = _.split(v, ' ');
+          var i = randomIndex(words);
+          var format = _.sample([
+            _.upperFirst,
+            _.lowerFirst,
+          ]);
+
+          words[i] = format(words[i]);
+
+          return _.join(words, ' ');
+        }
+
+        function misspellGeneric(v) {
+          var words = _.split(v, ' ');
+          var i = randomIndex(words);
+          var format = _.sample([
+            // Collapse or expand 2 repeated letters
+            (w) => w,
+            // Vowel swap
+            (w) => w,
+          ]);
+
+          words[i] = format(words[i]);
+
+          return _.join(words, ' ');
+        }
+
         var format = _.sample([
-          _.upperFirst,
-          _.lowerFirst,
+          miscase,
+          misspellPattern,
+          misspellGeneric,
         ]);
 
         path.node.value = format(path.node.value);
