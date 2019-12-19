@@ -30,16 +30,22 @@ async function main() {
     plugins: [plugin]
   };
 
-  for (var i = 0; i < argv.worlds; i++) {
-    promises.push(babel.transformFileAsync(argv.filepath, options));
-  }
+  var result = babel.transformFileSync(argv.filepath, options);
 
-  promises.forEach((promise, i) => {
-    promise.then(
-      (result) => console.log(result.code, "\n"),
-      console.error
-    );
-  });
+  console.log(result.code);
+
+  var i = 0;
+
+  while (++i < argv.worlds) {
+    try {
+      result = babel.transformSync(result.code, options);
+    } catch(e) {
+      console.log(e);
+      break;
+    }
+
+    console.log(result.code);
+  }
 }
 
 main();
