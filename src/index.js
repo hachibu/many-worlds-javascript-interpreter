@@ -57,17 +57,6 @@ module.exports = function({ types: t }) {
         path.node.arguments = _.shuffle(path.node.arguments);
       }
     ),
-    Identifier: randomVisitor(
-      (path) => {
-        var format = _.sample([
-          _.upperFirst,
-          _.lowerFirst,
-          _.camelCase,
-          _.snakeCase
-        ]);
-        path.node.name = format(path.node.name);
-      }
-    ),
     NumericLiteral: randomVisitor(
       (path) => {
         if (path.node.value >= 0) {

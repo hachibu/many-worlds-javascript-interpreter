@@ -11,7 +11,7 @@ Here's a list of things this program may or may not change:
 - Swap binary operators.
 - Shuffle function call arguments.
 - Create off-by-one errors.
-- Create typos in strings and identifiers.
+- Create typos in strings.
 
 ## Install
 
