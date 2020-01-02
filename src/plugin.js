@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var { choose, randomVisitor } = require('./utils');
 
 function plugin({ types: t }) {
   var visitor = {
@@ -121,24 +122,9 @@ function plugin({ types: t }) {
     )
   };
 
-  return { visitor };
-};
-
-function randomVisitor(...fs) {
-  return function(...args) {
-    for (var f of fs) {
-      if (choose()) {
-        f(...args);
-      }
-    }
+  return {
+    visitor
   };
-}
-
-function choose() {
-  var n = 0;
-  var m = _.random(8);
-
-  return _.random(n, m) === n;
-}
+};
 
 module.exports = plugin;
