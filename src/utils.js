@@ -16,7 +16,12 @@ function randomVisitor(...fs) {
   };
 }
 
+function randomIndex(array) {
+  return Math.floor(Math.random() * array.length);
+}
+
 module.exports = {
   choose,
+  randomIndex,
   randomVisitor
 };

@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var { choose, randomVisitor } = require('./utils');
+var { choose, randomIndex, randomVisitor } = require('./utils');
 
 function plugin({ types: t }) {
   var visitor = {
@@ -86,10 +86,6 @@ function plugin({ types: t }) {
           });
 
           return v;
-        }
-
-        function randomIndex(array) {
-          return Math.floor(Math.random() * array.length);
         }
 
         function miscase(v) {
