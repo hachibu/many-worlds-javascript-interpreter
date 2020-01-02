@@ -3,16 +3,18 @@
 var _      = require('lodash'),
     babel  = require('@babel/core'),
     plugin = require('../src/plugin'),
+    Tree   = require('../src/tree'),
     yargs  = require('yargs');
 
-var desc = 'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another universe.';
 var argv = yargs
-  .usage('$0 <filepath>', desc, (yargs) => {
-    yargs.positional('filepath', {
+  .usage(
+    '$0 <filepath>',
+    'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another universe.',
+    (yargs) => yargs.positional('filepath', {
       describe: 'JavaScript filepath.',
       type: 'string',
     })
-  })
+  )
   .option('depth', {
     alias: 'd',
     default: 0,
@@ -24,40 +26,6 @@ var argv = yargs
 function printResult({ code, id }) {
   console.log(`/* ${id} */`);
   console.log(code, "\n");
-}
-
-class Tree {
-  constructor() {
-    this._children = [];
-    this._data = undefined;
-    this._depth = 0;
-  }
-
-  set data(data) {
-    this._data = data;
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  set depth(depth) {
-    this._depth = depth;
-  }
-
-  get depth() {
-    return this._depth;
-  }
-
-  insert(tree) {
-    tree.depth = this.depth + 1;
-    this._children.push(tree);
-  }
-
-  each(f) {
-    f(this);
-    _.each(this._children, (child) => child.each(f));
-  }
 }
 
 async function main() {
@@ -99,9 +67,7 @@ async function main() {
     });
   }
 
-  t.each((node) => {
-    printResult(node.data, node.data.id);
-  });
+  t.each((node) => printResult(node.data, node.data.id));
 }
 
 main();
