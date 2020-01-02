@@ -2,7 +2,7 @@
 
 var _      = require('lodash'),
     babel  = require('@babel/core'),
-    plugin = require('../src/index'),
+    plugin = require('../src/plugin'),
     yargs  = require('yargs');
 
 var desc = 'Explore the many-worlds interpretation of quantum mechanics and see mistakes you might have made in another universe.';
