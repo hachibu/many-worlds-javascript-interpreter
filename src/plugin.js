@@ -1,28 +1,29 @@
-var _ = require('lodash');
-var { choose, randomIndex, randomVisitor } = require('./utils');
+var _ = require('lodash'),
+    u = require('./utils'),
+    g = require('@babel/generator').default;
 
 function plugin({ types: t }) {
-  var visitor = {
-    ArrayExpression: randomVisitor(
-      (path) => {
-        path.node.elements = _.shuffle(path.node.elements);
-      }
+  let visitor = {
+    ArrayExpression: u.randomVisitor(
+      path => path.node.elements = _.shuffle(path.node.elements)
     ),
-    BinaryExpression: randomVisitor(
-      (path) => {
-        var left = path.node.left;
+
+    BinaryExpression: u.randomVisitor(
+      path => {
+        let left = path.node.left;
 
         path.node.left = path.node.right;
         path.node.right = left;
       },
-      (path) => {
-        var oldOperator = path.node.operator;
-        var newOperator = oldOperator;
-        var operators = {
+
+      path => {
+        let operators = {
           bitwise: ['|', '^', '&', '<<', '>>', '>>>'],
           equality: ['==', '!=', '===', '!==', '<', '<=', '>', '>='],
-          math: ['+', '-', '*', '/', '%', '**'],
+          math: ['+', '-', '*', '/', '%', '**']
         };
+        let oldOperator = path.node.operator;
+        let newOperator = oldOperator;
 
         _.each(operators, (choices, _type) => {
           if (_.includes(choices, oldOperator)) {
@@ -36,91 +37,60 @@ function plugin({ types: t }) {
         );
       }
     ),
-    CallExpression: randomVisitor(
-      (path) => {
-        path.node.arguments = _.shuffle(path.node.arguments);
+
+    CallExpression: u.randomVisitor(
+      path => path.node.arguments = _.shuffle(path.node.arguments)
+    ),
+
+    LogicalExpression: u.randomVisitor(
+      path => {
+        let operators = ['&&', '||'];
+
+        path.node.operator = _.sample(operators);
       }
     ),
-    NumericLiteral: randomVisitor(
-      (path) => {
+
+    ForStatement: u.randomVisitor(
+      path => {
+        let whileStatement = t.whileStatement(path.node.test, path.node.body);
+
+        whileStatement.body.body.push(path.node.update);
+
+        path.replaceWithMultiple([
+          path.node.init,
+          whileStatement
+        ]);
+      }
+    ),
+
+    NumericLiteral: u.randomVisitor(
+      path => {
         if (path.node.value >= 0) {
           path.node.value += 1;
         }
       },
-      (path) => {
+      path => {
         if (path.node.value >= 1) {
           path.node.value -= 1;
         }
       },
     ),
-    StringLiteral: randomVisitor(
-      (path) => {
-        function misspell(v) {
-          var typos = [
-            ['the', 'teh'],
-            ['there', 'their'],
-            ['too', 'two'],
-            ['than', 'then'],
-            ['where', 'were'],
-            ["we're", 'were'],
-            ["you're", 'your'],
-            ["it's", 'its'],
-            ['your', 'you'],
-            ['o', 'oo'],
-            ['a', 'e'],
-            ['e', 'i'],
-            ['i', 'o'],
-            ['o', 'u'],
-            ['u', 'o'],
-          ];
 
-          _.each(typos, (typo) => {
-            if (choose()) {
-              typo = _.reverse(typo);
-            }
-
-            var pattern = new RegExp(typo[0], 'ig');
-            var replacement = typo[1];
-
-            v = _.replace(v, pattern, replacement);
-          });
-
-          return v;
+    UpdateExpression: u.randomVisitor(
+      path => {
+        switch (path.node.operator) {
+          case '++':
+            path.node.operator = '--';
+            break;
+          case '--':
+            path.node.operator = '++';
+            break;
         }
-
-        function miscase(v) {
-          var words = _.split(v, ' ');
-          var indices = [
-            randomIndex(words),
-            randomIndex(words),
-          ];
-
-          _.each(indices, (i) => {
-            var format = _.sample([
-              _.upperFirst,
-              _.lowerFirst,
-              (w) => ' ' + w,
-              (w) => w + ' ',
-            ]);
-            words[i] = format(words[i]);
-          });
-
-          return _.join(words, ' ');
-        }
-
-        var format = _.sample([
-          miscase,
-          misspell,
-        ]);
-
-        path.node.value = format(path.node.value);
       }
-    )
+    ),
   };
 
-  return {
-    visitor
-  };
+  return { visitor };
 };
 
 module.exports = plugin;

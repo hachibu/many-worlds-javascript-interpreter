@@ -1,78 +1,119 @@
 # Many Worlds JavaScript Interpreter
 
-Explore the [many-worlds interpretation of quantum mechanics](https://en.wikipedia.org/wiki/Many-worlds_interpretation)
-and see programming mistakes you might have made in another universe.
+### Table of Contents
 
-__What kind mistakes will it make?__
+- [Introduction](#introduction)
+- [What Kind of Transformations Will It Apply?](#what-kind-of-transformations-will-it-apply)
+- [How Does It Work?](#how-does-it-work)
 
-My guiding principle, when deciding what types of transformation to apply, was
-to make it so programs would still run. With that in mind, I tried to avoid
-creating syntax errors, making destructive transformations like deleting
-characters from strings or changing identifiers.
+## Introduction
 
-Here is a list of transformations this program may or may not do to your code:
+This is a fun thought experiment that is inspired by [Sean Carroll's YouTube talk](https://www.youtube.com/watch?v=gpEvv349Pyk)
+on the [many-worlds interpretation of quantum mechanics](https://en.wikipedia.org/wiki/Many-worlds_interpretation).
 
-- Shuffle arrays.
-- Swap binary expression operands.
-- Swap binary operators.
-- Shuffle function call arguments.
-- Create off-by-one errors.
-- Create typos in strings.
+My understanding is that the many-worlds interpretation of quantum mechanics
+imagines our universe as one node of an infinitely branching tree of universes.
+And each time a universe branches, it produces a child universe which is
+slightly different from the parent universe.
 
-__How does it work?__
+Now imagine that you're in an interview and you're asked to code FizzBuzz. In
+this universe you decide that you want to use a for-loop. According to the
+many-worlds interpretation, your universe branched into many universes the
+moment you decided to use a for-loop. In this universe you used a for-loop but
+in another universe you used a while-loop.
 
-I created a Babel plugin to apply the transformations. Babel does all the heavy
-lifting. All I did was create a visitor and define my transformations.
+What if you could explore these branches?
 
-For the many-worlds I chose to represent it as a binary tree. The root universe
-is created automatically and each time a universe branches it creates 2 new
-universes. You can control the depth of recursion with the `--depth` flag.
+This program allows you to do that by applying non-destructive transformations
+to your code that could plausibly be attributed to good or bad human decision
+making in multiple universes. With this program you can see what mistakes or
+improvements other versions of you might have made in other universes. It's also
+worth nothing that these transformations might not actually be mistakes because
+in other universes the constants are not always going to be the same as ours.
 
-If I ran the command `bin/run examples/math.js --depth 1` the output would be:
+## What Kind of Transformations Will It Apply?
 
-```js
-/* World 0 */
-function calculate(a, b, c) {
-  return a + b * c;
-}
+I can neither confirm nor deny that this program will apply any of the following
+transformations to your code.
 
-console.log('The result is', calculate(...[0, 1, 2]));
+  - Shuffle arrays.
+  - Swap binary expression operands.
+  - Swap bitwise, equality logical and math operators.
+  - Shuffle function call arguments.
+  - Create numeric off-by-one errors.
+  - Decrement instead of increment.
+  - Transform for-loops into while-loops.
 
-/* World 0 => World 0₀ */
-function calculate(a, b, c) {
-  return a + b * c;
-}
+## How Does It Work?
 
-console.log(calculate(...[1, 1, 2]), "Tha rasolt os");
+This program is essentially just a [Babel](https://babeljs.io) plugin. Babel
+does all of the heavy lifting. All I did was create a visitor that randomly
+applies the transformations that I described above.
 
-/* World 0 => World 0₁ */
-function calculate(a, b, c) {
-  return a + b * c;
-}
+I chose to represent the many-worlds as a binary tree. Each time a universe
+branches it creates 2 child universes. You can control the depth of recursion
+with the `--depth` flag.
 
-console.log(calculate(...[0, 0, 3]), 'The result is');
+```shell
+$ bin/run examples/fizzbuzz.js --depth 1
 ```
 
-You should notice that each universe has a comment showing its path in the
-binary tree of universes. A subscript of 0 means it's the left branch and a
-subscript of 1 means it's the right branch.
-
-In the example output above, `World 0 => World 0₀` is the left branch of
-`World 0` and `World 0 => World 0₁` is the right branch of `World 0`.
-
-## Setup
-
-    yarn install
-
-## Usage
-
-    bin/run examples/math.js --depth 1
-    bin/run examples/math.js --depth 1 | node
-
-## Install Script
-
-    yarn link
-
-## Uninstall Script
-
-    yarn unlink
+```javascript
+Tree {
+  depth: 0,
+  data: {
+    id: 'World 0',
+    code: 'for (let i = 1; i <= 100; i++) {\n' +
+      '  if (i % 15 === 0) {\n' +
+      "    console.log('FizzBuzz');\n" +
+      '  } else if (i % 5 === 0) {\n' +
+      "    console.log('Buzz');\n" +
+      '  } else if (i % 3 === 0) {\n' +
+      "    console.log('Fizz');\n" +
+      '  } else {\n' +
+      '    console.log(i);\n' +
+      '  }\n' +
+      '}'
+  },
+  children: [
+    Tree {
+      depth: 1,
+      data: {
+        id: 'World 0 => World 0₀',
+        code: 'let i = 1;\n' +
+          '\n' +
+          'while (100 <= i) {\n' +
+          '  if (i % 15 === 0) {\n' +
+          "    console.log('FizzBuzz');\n" +
+          '  } else if (6 + i === 1) {\n' +
+          "    console.log('Buzz');\n" +
+          '  } else if (1 === i % 3) {\n' +
+          "    console.log('Fizz');\n" +
+          '  } else {\n' +
+          '    console.log(i);\n' +
+          '  }\n' +
+          '\n' +
+          '  i++\n' +
+          '}'
+      }
+    },
+    Tree {
+      depth: 1,
+      data: {
+        id: 'World 0 => World 0₁',
+        code: 'for (let i = 1; 99 <= i; i++) {\n' +
+          '  if (i % 16 === 0) {\n' +
+          "    console.log('FizzBuzz');\n" +
+          '  } else if (i % 5 === 0) {\n' +
+          "    console.log('Buzz');\n" +
+          '  } else if (2 % i === 0) {\n' +
+          "    console.log('Fizz');\n" +
+          '  } else {\n' +
+          '    console.log(i);\n' +
+          '  }\n' +
+          '}'
+      }
+    }
+  ]
+}
+```

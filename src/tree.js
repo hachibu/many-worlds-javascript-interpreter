@@ -1,36 +1,26 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+    u = require('util');
 
 class Tree {
   constructor() {
-    this._children = [];
-    this._data = undefined;
-    this._depth = 0;
-  }
-
-  set data(data) {
-    this._data = data;
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  set depth(depth) {
-    this._depth = depth;
-  }
-
-  get depth() {
-    return this._depth;
+    this.depth = 0;
   }
 
   insert(tree) {
     tree.depth = this.depth + 1;
-    this._children.push(tree);
+    if (!this.children) {
+      this.children = [];
+    }
+    this.children.push(tree);
   }
 
   each(f) {
     f(this);
-    _.each(this._children, (child) => child.each(f));
+    _.each(this.children, (child) => child.each(f));
+  }
+
+  print() {
+    console.log(u.inspect(this, false, null, true));
   }
 }
 

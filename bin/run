@@ -36,8 +36,8 @@ async function main() {
   var t = new Tree();
 
   t.data = {
-    code: babel.transformFileSync(argv.filepath, options).code,
-    id: 'World 0'
+    id: 'World 0',
+    code: babel.transformFileSync(argv.filepath).code
   };
 
   function branch(node) {
@@ -45,12 +45,12 @@ async function main() {
     var b = new Tree();
 
     a.data = {
-      code: babel.transformSync(node.data.code, options).code,
-      id: `${node.data.id} => World ${node.depth}₀`
+      id: `${node.data.id} => World ${node.depth}₀`,
+      code: babel.transformSync(node.data.code, options).code
     };
     b.data = {
-      code: babel.transformSync(node.data.code, options).code,
-      id: `${node.data.id} => World ${node.depth}₁`
+      id: `${node.data.id} => World ${node.depth}₁`,
+      code: babel.transformSync(node.data.code, options).code
     };
 
     node.insert(a);
@@ -60,14 +60,14 @@ async function main() {
   var depth = -1;
 
   while (++depth < argv.depth) {
-    t.each((node) => {
+    t.each(node => {
       if (node.depth === depth) {
         branch(node);
       }
     });
   }
 
-  t.each((node) => printResult(node.data, node.data.id));
+  t.print();
 }
 
 main();
