@@ -10,8 +10,8 @@
     "many-worlds-javascript-interpreter": "./bin/run"
   },
   "dependencies": {
-    "@babel/core": "7.7.5",
+    "@babel/core": "7.9.6",
     "lodash": "4.17.15",
-    "yargs": "15.0.2"
+    "yargs": "15.3.1"
   }
 }
