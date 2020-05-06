@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var _      = require('lodash'),
-    babel  = require('@babel/core'),
-    plugin = require('../src/plugin'),
-    Tree   = require('../src/tree'),
-    yargs  = require('yargs');
+var _        = require('lodash'),
+    babel    = require('@babel/core'),
+    plugin   = require('../src/plugin'),
+    Universe = require('../src/universe'),
+    yargs    = require('yargs');
 
 var argv = yargs
   .usage(
@@ -23,8 +23,8 @@ var argv = yargs
   })
   .argv;
 
-function printResult({ code, id }) {
-  console.log(`/* ${id} */`);
+function printResult({ code, name }) {
+  console.log(`/* ${name} */`);
   console.log(code, "\n");
 }
 
@@ -33,23 +33,23 @@ async function main() {
     plugins: [plugin]
   };
 
-  var t = new Tree();
+  var u = new Universe();
 
-  t.data = {
-    id: 'World 0',
+  u.data = {
+    name: 'World 0',
     code: babel.transformFileSync(argv.filepath).code
   };
 
   function branch(node) {
-    var a = new Tree();
-    var b = new Tree();
+    var a = new Universe();
+    var b = new Universe();
 
     a.data = {
-      id: `${node.data.id} => World ${node.depth}₀`,
+      name: `${node.data.name} => World ${node.depth}₀`,
       code: babel.transformSync(node.data.code, options).code
     };
     b.data = {
-      id: `${node.data.id} => World ${node.depth}₁`,
+      name: `${node.data.name} => World ${node.depth}₁`,
       code: babel.transformSync(node.data.code, options).code
     };
 
@@ -60,14 +60,14 @@ async function main() {
   var depth = -1;
 
   while (++depth < argv.depth) {
-    t.each(node => {
+    u.each(node => {
       if (node.depth === depth) {
         branch(node);
       }
     });
   }
 
-  t.print();
+  u.print();
 }
 
 main();

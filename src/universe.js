@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     u = require('util');
 
-class Tree {
+class Universe {
   constructor() {
     this.depth = 0;
   }
@@ -24,4 +24,4 @@ class Tree {
   }
 }
 
-module.exports = Tree;
+module.exports = Universe;
