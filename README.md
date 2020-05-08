@@ -7,21 +7,23 @@
 
 ## Introduction
 
-This is a command line tool that allows you to explore your code in other
-universes (kind of). This tool is essentially a [Babel](https://babeljs.io)
-compiler plugin that randomly applies non-destructive transformations to your
-code that could plausibly be attributed to human decision making in alternate
+This is a command line tool that allows you to explore your code in alternate
 universes.
 
-Here's a complete list of all the transformations that may or may not be applied
-to your code.
+It's essentially a [Babel](https://babeljs.io) compiler plugin that randomly
+applies minor transformations to your code that could be attributed to human
+decision making therefore simulating what you might have written in another
+universe.
+
+Here's a complete list of all the transformations that might be applied to your
+code in order to simulate outcomes in other universes.
 
   - Transform for-loops into while-loops.
   - Shuffle arrays and function call arguments.
   - Swap binary expression operands.
   - Swap bitwise, equality logical and math operators.
   - Create numeric off-by-one errors.
-  - Decrement instead of increment and vice versa.
+  - Decrementing instead of incrementing inside of update expressions.
 
 This project was inspired by [Sean Carroll's talk on the many-worlds interpretation of quantum mechanics](https://www.youtube.com/watch?v=gpEvv349Pyk).
 
