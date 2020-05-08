@@ -15,7 +15,7 @@ var argv = yargs
       type: 'string',
     })
   )
-  .option('depth', {
+  .option('recursion-depth', {
     alias: 'd',
     default: 0,
     describe: 'Depth of recursion.',
@@ -59,7 +59,7 @@ async function main() {
 
   var depth = -1;
 
-  while (++depth < argv.depth) {
+  while (++depth < argv.recursionDepth) {
     u.each(node => {
       if (node.depth === depth) {
         branch(node);

@@ -28,7 +28,7 @@ This project was inspired by [Sean Carroll's talk on the many-worlds interpretat
 ## Usage
 
 ```shell
-$ bin/run examples/fizzbuzz.js --depth 1
+$ bin/run examples/fizzbuzz.js --recursion-depth 1
 ```
 
 ```javascript
